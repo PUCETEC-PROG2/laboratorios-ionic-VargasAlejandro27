@@ -2,9 +2,9 @@
 
 ## Información del Estudiante
 
-- **Nombre:** [Tu nombre completo aquí]
-- **Carrera:** [Tu carrera]
-- **Fecha de inicio:** [Fecha]
+- **Nombre:** Alejandro Valentino Vargas Saavedra
+- **Carrera:** Tecnologia en desarrollo en Software
+- **Fecha de inicio:** 13/06/2026
 
 ---
 

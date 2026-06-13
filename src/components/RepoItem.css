@@ -1,0 +1,65 @@
+	/* Colores inspirados en PUCE */
+	:root{
+		--puce-green: #00583a;
+		--puce-light: #2da56b;
+		--puce-gold: #f2b705;
+		--puce-dark: #033827;
+		--text-default: #222222;
+		--muted: #6b6b6b;
+	}
+
+	.repo-item{
+		margin: 8px 0;
+	}
+
+	.repo-item__item{
+		--background: #fff;
+		border-left: 4px solid var(--puce-green);
+		border-radius: 6px;
+		box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+	}
+
+	.repo-item ion-thumbnail img{
+		width: 56px;
+		height: 56px;
+		object-fit: cover;
+		border-radius: 6px;
+		border: 2px solid rgba(0,0,0,0.04);
+	}
+
+	.repo-item ion-label h3{
+		margin: 0 0 2px 0;
+		color: var(--puce-dark);
+		font-weight: 600;
+	}
+
+	.repo-item .owner{
+		margin: 0 0 6px 0;
+		color: var(--puce-green);
+		font-size: 0.9rem;
+	}
+
+	.repo-item ion-label p{
+		margin: 0;
+		color: var(--text-default);
+	}
+
+	.repo-item ion-item-options ion-item-option{
+		--background: var(--puce-light);
+		color: white;
+	}
+
+	.repo-item ion-item-options ion-item-option[color="danger"]{
+		--background: var(--puce-gold);
+		color: var(--puce-dark);
+	}
+
+	.repo-item ion-item-options ion-icon{
+		color: inherit;
+	}
+
+	.repo-item:hover{
+		transform: translateY(-1px);
+	}
+
+    

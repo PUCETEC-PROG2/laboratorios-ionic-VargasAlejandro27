@@ -1,0 +1,62 @@
+import {GitHubUser} from '../Interface/GitHubUsers';
+
+const GITHUB_API_URL = 'https://api.github.com';
+const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+
+
+interface GithubRepoOwner {
+  login: string;
+  avatar_url: string;
+}
+
+interface GithubRepo {
+  name: string;
+  owner: GithubRepoOwner;
+  description: string | null;
+  language: string | null;
+}
+
+export const getUserRepos = async (): Promise<GithubRepo[]> => {
+  if (!GITHUB_TOKEN) {
+    console.warn('VITE_GITHUB_TOKEN no está definido en .env');
+    return [];
+  }
+
+  try {
+    const response = await fetch(`${GITHUB_API_URL}/user/repos?per_page=100`, {
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github+json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error obtenido repositorios: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching repositories:', error);
+    return [];
+  }
+};
+
+export const getUserProfile = async (): Promise<GitHubUser | null> => {
+    try {
+        const response = await fetch(`${GITHUB_API_URL}/user`, {
+            headers: {
+                Authorization: `Bearer ${GITHUB_TOKEN}`,
+                Accept: 'application/vnd.github+json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error obteniendo perfil: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        return null;
+    }
+};

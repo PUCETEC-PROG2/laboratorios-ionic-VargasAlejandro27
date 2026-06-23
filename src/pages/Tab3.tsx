@@ -59,27 +59,10 @@ const Tab3: React.FC = () => {
               <IonCardTitle>{userInfo.name}</IonCardTitle>
               <IonCardSubtitle>{userInfo.login}</IonCardSubtitle>
               <IonCardContent>
-                {userInfo.bio && <p><strong>Bio:</strong> {userInfo.bio}</p>}
-                {userInfo.company && <p><strong>Compañía:</strong> {userInfo.company}</p>}
-                {userInfo.location && <p><strong>Ubicación:</strong> {userInfo.location}</p>}
-                {userInfo.email && <p><strong>Email:</strong> {userInfo.email}</p>}
-                {userInfo.blog && (
-                  <p>
-                    <strong>Sitio:</strong>{' '}
-                    <a href={userInfo.blog.startsWith('http') ? userInfo.blog : `https://${userInfo.blog}`} target="_blank" rel="noreferrer">
-                      {userInfo.blog}
-                    </a>
-                  </p>
-                )}
-                <p><strong>Repositorios públicos:</strong> {userInfo.public_repos}</p>
-                <p><strong>Seguidores:</strong> {userInfo.followers}</p>
-                <p><strong>Siguiendo:</strong> {userInfo.following}</p>
-                <p>
-                  <strong>Perfil de GitHub:</strong>{' '}
-                  <a href={userInfo.html_url} target="_blank" rel="noreferrer">
-                    {userInfo.html_url}
-                  </a>
-                </p>
+                <p>Perfil de GitHub: <a href={userInfo.html_url} target="_blank" rel="noreferrer">{userInfo.html_url}</a></p>
+                <p>Nombre: {userInfo.name}</p>
+                <p>Usuario: {userInfo.login}</p>
+                
               </IonCardContent>
             </IonCard>
           </div>

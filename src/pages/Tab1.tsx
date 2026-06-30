@@ -33,16 +33,17 @@ const Tab1: React.FC = () => {
   };
 
   const handleDeleteRepo = async (owner: string, name: string) => {
+    const confirmed = window.confirm(`¿Eliminar el repositorio ${name}? Esta acción no se puede deshacer.`);
+    if (!confirmed) {
+      return;
+    }
+
     setLoading(true);
     setErrorMsg('');
 
     try {
-      const deleted = await deleteRepository(owner, name);
-      if (deleted) {
-        await fetchRepos();
-      } else {
-        setErrorMsg('No se pudo eliminar el repositorio.');
-      }
+      await deleteRepository(owner, name);
+      await fetchRepos();
     } catch (err) {
       console.error('Error eliminando repositorio:', err);
       setErrorMsg('Error eliminando repositorio: ' + (err as Error).message);

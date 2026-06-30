@@ -129,27 +129,23 @@ export const updateRepository = async (
 export const deleteRepository = async (owner: string, repo: string): Promise<boolean> => {
   if (!GITHUB_TOKEN) {
     console.warn('VITE_GITHUB_TOKEN no está definido en .env');
-    return false;
+    throw new Error('VITE_GITHUB_TOKEN no está definido en .env');
   }
 
-  try {
-    const response = await fetch(`${GITHUB_API_URL}/repos/${owner}/${repo}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github+json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error eliminando repositorio: ${response.statusText}`);
+  const response = await fetch(`${GITHUB_API_URL}/repos/${owner}/${repo}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github+json'
     }
+  });
 
-    return true;
-  } catch (error) {
-    console.error('Error eliminando repositorio:', error);
-    return false;
+  if (!response.ok) {
+    const bodyText = await response.text();
+    throw new Error(`Error eliminando repositorio (${response.status}): ${response.statusText} ${bodyText}`);
   }
+
+  return true;
 };
 
 export const getUserProfile = async (): Promise<GitHubUser | null> => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar, IonLoading, IonText, useIonViewWillEnter } from '@ionic/react';
 import RepoItem from '../components/RepoItem';
 import LoadingSpinners from '../components/LoadingSpinners';
-import { getUserRepos } from '../service/GithubServices';
+import { getUserRepos, updateRepository, deleteRepository } from '../service/GithubServices';
 import { Repository } from '../Interface/Repository';
 import './Tab1.css';
 
@@ -27,6 +27,65 @@ const Tab1: React.FC = () => {
     } catch (err) {
       console.error('Error obteniendo repositorios:', err);
       setErrorMsg('Error obteniendo repositorios: ' + (err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteRepo = async (owner: string, name: string) => {
+    setLoading(true);
+    setErrorMsg('');
+
+    try {
+      const deleted = await deleteRepository(owner, name);
+      if (deleted) {
+        await fetchRepos();
+      } else {
+        setErrorMsg('No se pudo eliminar el repositorio.');
+      }
+    } catch (err) {
+      console.error('Error eliminando repositorio:', err);
+      setErrorMsg('Error eliminando repositorio: ' + (err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditRepo = async (repository: Repository) => {
+    const newName = window.prompt('Nuevo nombre del repositorio:', repository.name);
+    if (newName === null) {
+      return;
+    }
+
+    const newDescription = window.prompt('Nueva descripción del repositorio:', repository.description);
+    if (newDescription === null) {
+      return;
+    }
+
+    const payload: { name?: string; description?: string } = {};
+    if (newName.trim() && newName.trim() !== repository.name) {
+      payload.name = newName.trim();
+    }
+    if (newDescription.trim() !== repository.description) {
+      payload.description = newDescription.trim();
+    }
+
+    if (Object.keys(payload).length === 0) {
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const updated = await updateRepository(repository.owner, repository.name, payload);
+      if (updated) {
+        await fetchRepos();
+      } else {
+        setErrorMsg('No se pudo actualizar el repositorio.');
+      }
+    } catch (err) {
+      console.error('Error actualizando repositorio:', err);
+      setErrorMsg('Error actualizando repositorio: ' + (err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -62,7 +121,12 @@ const Tab1: React.FC = () => {
         {!loading && !errorMsg ? (
           <IonList className="repo-list">
             {repositoryList.map((repo) => (
-              <RepoItem key={`${repo.owner}/${repo.name}`} {...repo} />
+              <RepoItem
+                key={`${repo.owner}/${repo.name}`}
+                {...repo}
+                onEdit={() => handleEditRepo(repo)}
+                onDelete={() => handleDeleteRepo(repo.owner, repo.name)}
+              />
             ))}
           </IonList>
         ) : loading ? (

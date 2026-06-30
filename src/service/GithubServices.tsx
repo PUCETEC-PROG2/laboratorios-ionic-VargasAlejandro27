@@ -43,6 +43,11 @@ export const getUserRepos = async (): Promise<GithubRepo[]> => {
 };
 
 
+export interface RepositoryUpdatePayload {
+  name?: string;
+  description?: string;
+}
+
 export const createRepository = async (repository: RepositoryPayload): Promise<Repository | null> => {
   if (!GITHUB_TOKEN) {
     console.warn('VITE_GITHUB_TOKEN no está definido en .env');
@@ -79,6 +84,71 @@ export const createRepository = async (repository: RepositoryPayload): Promise<R
   } catch (error) {
     console.error('Error creando repositorio:', error);
     return null;
+  }
+};
+
+export const updateRepository = async (
+  owner: string,
+  repo: string,
+  repository: RepositoryUpdatePayload
+): Promise<Repository | null> => {
+  if (!GITHUB_TOKEN) {
+    console.warn('VITE_GITHUB_TOKEN no está definido en .env');
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${GITHUB_API_URL}/repos/${owner}/${repo}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(repository)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error actualizando repositorio: ${response.statusText}`);
+    }
+
+    const repoData = await response.json();
+    return {
+      name: repoData.name,
+      owner: repoData.owner?.login ?? owner,
+      avatarUrl: repoData.owner?.avatar_url ?? '',
+      description: repoData.description ?? repository.description ?? '',
+      language: repoData.language ?? 'N/A'
+    };
+  } catch (error) {
+    console.error('Error actualizando repositorio:', error);
+    return null;
+  }
+};
+
+export const deleteRepository = async (owner: string, repo: string): Promise<boolean> => {
+  if (!GITHUB_TOKEN) {
+    console.warn('VITE_GITHUB_TOKEN no está definido en .env');
+    return false;
+  }
+
+  try {
+    const response = await fetch(`${GITHUB_API_URL}/repos/${owner}/${repo}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github+json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error eliminando repositorio: ${response.statusText}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error eliminando repositorio:', error);
+    return false;
   }
 };
 
